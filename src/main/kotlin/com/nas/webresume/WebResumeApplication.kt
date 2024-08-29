@@ -19,11 +19,21 @@ fun main(args: Array<String>) {
 @RestController
 class MessageController(val service: MessageService) {
 	@GetMapping("/")
-	fun index(): List<Message> = service.findMessages()
+	fun index(){
+		print("Index hit")
+	}
 
 	@GetMapping("/{id}")
 	fun index(@PathVariable id: String): List<Message> =
 		service.findMessageById(id)
+
+	@GetMapping("/list")
+	fun list(): List<Message> = service.findMessages()
+
+	@GetMapping("/wipeit")
+	fun deleteAll(){
+		service.wipeMessages()
+	}
 
 	@PostMapping("/")
 	fun post(@RequestBody message: Message) {
@@ -37,18 +47,22 @@ data class Message (val id: String?, val text: String)
 @Service
 class MessageService(val db: JdbcTemplate) {
 
-	fun findMessages(): List<Message> = db.query("select * from messages") { response, _ ->
+	fun findMessages(): List<Message> = db.query("	SELECT * FROM messages") { response, _ ->
 		Message(response.getString("id"), response.getString("text"))
 	}
 
-	fun findMessageById(id: String): List<Message> = db.query("select * from messages where id = ?", id) { response, _ ->
+	fun findMessageById(id: String): List<Message> = db.query("SELECT * FROM messages WHERE id = ?", id) { response, _ ->
 		Message(response.getString("id"), response.getString("text"))
+	}
+
+	fun wipeMessages(): Int {
+		return db.update("DELETE FROM messages")
 	}
 
 	fun save(message: Message) {
 		val id = message.id ?: UUID.randomUUID().toString()
 		db.update(
-			"insert into messages values ( ?, ? )",
+			"INSERT INTO messages VALUES ( ?, ? )",
 			id, message.text
 		)
 	}
