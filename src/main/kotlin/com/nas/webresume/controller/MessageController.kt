@@ -5,6 +5,7 @@ package com.nas.webresume.controller
 import com.nas.webresume.model.Message
 import com.nas.webresume.service.MessageService
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 class MessageController(val service: MessageService) {
@@ -14,7 +15,7 @@ class MessageController(val service: MessageService) {
     }
 
     @GetMapping("/{id}")
-    fun index(@PathVariable id: String): List<Message> =
+    fun index(@PathVariable id: UUID): Message =
         service.findMessageById(id)
 
     @GetMapping("/list")

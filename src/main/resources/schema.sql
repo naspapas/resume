@@ -1,4 +1,4 @@
 CREATE TABLE IF NOT EXISTS messages (
-id       VARCHAR(60)  PRIMARY KEY,
+id       UUID  PRIMARY KEY,
 text     VARCHAR      NOT NULL
 );
